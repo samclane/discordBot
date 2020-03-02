@@ -1,0 +1,1 @@
+Copied from 'Disgord' bot: https://github.com/bwmarrin/disgord
