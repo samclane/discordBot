@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/tarm/serial"
 	"log"
+	"unicode/utf8"
 )
 
 const (
@@ -65,8 +66,10 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 	}
 
 	// TODO Make this send bytes to Arduino correctly
-	fmt.Println([]byte(string(byte(sc))))
-	_, err = s.Write([]byte(string(byte(sc))))
+	buf := make([]byte, 1)
+	utf8.EncodeRune(buf, rune(sc))
+	fmt.Println(buf)
+	_, err = s.Write(buf)
 	if err != nil {
 		log.Fatal(err)
 	}
