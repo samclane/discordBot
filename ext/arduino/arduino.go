@@ -1,7 +1,6 @@
 package arduino
 
 import (
-	"encoding/binary"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/tarm/serial"
@@ -15,7 +14,7 @@ const (
 	DEAFENED     = iota
 )
 
-type statusCode uint16
+type statusCode byte
 
 type Arduino struct {
 	comPort      string
@@ -50,11 +49,11 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 
 	var sc statusCode
 
-	if vs.Deaf {
+	if vs.Deaf || vs.SelfDeaf {
 		sc = DEAFENED
-	} else if vs.Mute {
+	} else if vs.Mute || vs.SelfMute {
 		sc = MUTED
-	} else if vs.ChannelID != string(nil) {
+	} else if vs.ChannelID != "" {
 		sc = CONNECTED
 	} else {
 		sc = DISCONNECTED
@@ -66,10 +65,8 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 	}
 
 	// TODO Make this send bytes to Arduino correctly
-	bs := make([]byte, 4)
-	binary.LittleEndian.PutUint16(bs, uint16(sc))
-	fmt.Println(bs)
-	_, err = s.Write(bs)
+	fmt.Println([]byte(string(byte(sc))))
+	_, err = s.Write([]byte(string(byte(sc))))
 	if err != nil {
 		log.Fatal(err)
 	}
