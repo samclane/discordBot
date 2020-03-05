@@ -1,11 +1,13 @@
 package arduino
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/tarm/serial"
 	"log"
-	"unicode/utf8"
+	"time"
 )
 
 const (
@@ -14,8 +16,6 @@ const (
 	MUTED        = iota
 	DEAFENED     = iota
 )
-
-type statusCode byte
 
 type Arduino struct {
 	comPort      string
@@ -40,15 +40,15 @@ func (a *Arduino) SerialConnect() (*serial.Port, error) {
 	s, err := serial.OpenPort(a.serialConfig)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
+	time.Sleep(2 * time.Second)
 	return s, nil
 }
 
 func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceStateUpdate) {
 	vs := vsu.VoiceState
 
-	var sc statusCode
+	var sc byte
 
 	if vs.Deaf || vs.SelfDeaf {
 		sc = DEAFENED
@@ -66,19 +66,16 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 	}
 
 	// TODO Make this send bytes to Arduino correctly
-	buf := make([]byte, 1)
-	utf8.EncodeRune(buf, rune(sc))
-	fmt.Println(buf)
-	_, err = s.Write(buf)
+	buf := new(bytes.Buffer)
+	if err := binary.Write(buf, binary.LittleEndian, int8(sc)); err != nil {
+		log.Fatal(err)
+	}
+	n, err := s.Write(buf.Bytes())
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = s.Flush()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	fmt.Printf("sent %d byte(s): ", n)
+	fmt.Println(buf.Bytes())
 	err = s.Close()
 	if err != nil {
 		log.Fatal(err)
