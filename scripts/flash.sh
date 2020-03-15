@@ -1,0 +1,1 @@
+tinygo flash -target=arduino -port=/dev/ttyACM0 $1
