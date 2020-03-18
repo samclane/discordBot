@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-var ArduinoInterface = arduino.New("COM3", 9600)
+var ArduinoInterface = arduino.New("/dev/ttyACM0", 9600)
 
 func init() {
 	Session.AddHandler(ArduinoInterface.OnVoiceStateUpdate)

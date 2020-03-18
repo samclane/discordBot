@@ -48,7 +48,7 @@ func (a *Arduino) SerialConnect() (*serial.Port, error) {
 func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceStateUpdate) {
 	vs := vsu.VoiceState
 
-	var sc byte
+	var sc int8
 
 	if vs.Deaf || vs.SelfDeaf {
 		sc = DEAFENED
@@ -67,7 +67,7 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 
 	// TODO Make this send bytes to Arduino correctly
 	buf := new(bytes.Buffer)
-	if err := binary.Write(buf, binary.LittleEndian, int8(sc)); err != nil {
+	if err := binary.Write(buf, binary.LittleEndian, sc); err != nil {
 		log.Fatal(err)
 	}
 	n, err := s.Write(buf.Bytes())
