@@ -50,6 +50,17 @@ var STOP = [8]byte{
 	0b00000000,
 }
 
+var SMILE = [8]byte{
+	0b00000000,
+	0b00000000,
+	0b01100110,
+	0b01100110,
+	0b00000000,
+	0b01000010,
+	0b00111100,
+	0b00000000,
+}
+
 var (
 	uart = machine.UART0
 	tx   = machine.Pin(1) // 1, transmit line

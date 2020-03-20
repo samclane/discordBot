@@ -1,1 +1,1 @@
-tinygo flash -target=arduino -port=/dev/ttyACM0 $1
+tinygo flash -target=arduino -port=/dev/ttyACM0 ./arduino-tinygo/main.go

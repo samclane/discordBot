@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Discord Statuses
 const (
 	DISCONNECTED = iota
 	CONNECTED    = iota
@@ -17,14 +18,15 @@ const (
 	DEAFENED     = iota
 )
 
-type Arduino struct {
-	comPort      string
-	baudRate     int
-	serialConfig *serial.Config
+// Arduino object definition
+type SerialInterface struct {
+	comPort      string         // Name of serial port Ex "dev/ttyACM0", "COM3"
+	baudRate     int            // 9600 is a good starting value
+	serialConfig *serial.Config // reuses the com-port and baud rate values
 }
 
-func New(cp string, br int) *Arduino {
-	a := &Arduino{
+func New(cp string, br int) *SerialInterface {
+	a := &SerialInterface{
 		baudRate: br,
 		comPort:  cp,
 	}
@@ -36,7 +38,7 @@ func New(cp string, br int) *Arduino {
 	return a
 }
 
-func (a *Arduino) SerialConnect() (*serial.Port, error) {
+func (a *SerialInterface) SerialConnect() (*serial.Port, error) {
 	s, err := serial.OpenPort(a.serialConfig)
 	if err != nil {
 		log.Fatal(err)
@@ -45,7 +47,7 @@ func (a *Arduino) SerialConnect() (*serial.Port, error) {
 	return s, nil
 }
 
-func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceStateUpdate) {
+func (a *SerialInterface) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceStateUpdate) {
 	vs := vsu.VoiceState
 
 	var sc int8
@@ -65,7 +67,6 @@ func (a *Arduino) OnVoiceStateUpdate(_ *discordgo.Session, vsu *discordgo.VoiceS
 		log.Fatal(err)
 	}
 
-	// TODO Make this send bytes to Arduino correctly
 	buf := new(bytes.Buffer)
 	if err := binary.Write(buf, binary.LittleEndian, sc); err != nil {
 		log.Fatal(err)
