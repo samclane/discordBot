@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+/*
 var X = [8]byte{
 	0b10000001,
 	0b01000010,
@@ -16,6 +17,7 @@ var X = [8]byte{
 	0b01000010,
 	0b10000001,
 }
+*/
 
 var PLAY = [8]byte{
 	0b00000000,
@@ -88,7 +90,7 @@ func main() {
 
 			switch data {
 			case 0:
-				for i, v := range &X {
+				for i, v := range &SMILE {
 					ma.MaxSingle(byte(i+1), v)
 				}
 			case 1:
