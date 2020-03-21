@@ -1,4 +1,4 @@
-Copied from 'Disgord' bot: https://github.com/bwmarrin/disgord
+Discord Bot code copied from 'Disgord' bot: https://github.com/bwmarrin/disgord
 
 To run:
 

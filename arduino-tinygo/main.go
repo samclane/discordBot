@@ -77,6 +77,10 @@ func main() {
 		RX:       rx,
 	})
 
+	for i, v := range &SMILE {
+		ma.MaxSingle(byte(i+1), v)
+	}
+
 	for {
 		if uart.Buffered() > 0 {
 
@@ -84,19 +88,19 @@ func main() {
 
 			switch data {
 			case 0:
-				for i, v := range X {
+				for i, v := range &X {
 					ma.MaxSingle(byte(i+1), v)
 				}
 			case 1:
-				for i, v := range PLAY {
+				for i, v := range &PLAY {
 					ma.MaxSingle(byte(i+1), v)
 				}
 			case 2:
-				for i, v := range PAUSE {
+				for i, v := range &PAUSE {
 					ma.MaxSingle(byte(i+1), v)
 				}
 			case 3:
-				for i, v := range STOP {
+				for i, v := range &STOP {
 					ma.MaxSingle(byte(i+1), v)
 				}
 			}
